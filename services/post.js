@@ -10,6 +10,7 @@ const post = {
       const post = await newPost.save();
       res.status(200).send({ message: "created post", post });
     } catch (err) {
+      console.log("error in ", err);
       res.status(500).send({ message: "error in create post", details: err });
     }
   },
@@ -78,18 +79,24 @@ const post = {
     // getting query /?username=value
     const username = req.query.user;
     console.log(username);
-    try {
-      let posts;
-      if (username) {
-        posts = await Post.find({ username });
-        console.log("posts by user", posts);
-      } else {
-        posts = await Post.find();
-        console.log("all posts", posts);
+    if (username) {
+      try {
+        let posts;
+        if (username) {
+          posts = await Post.find({ username });
+          console.log("posts by user", posts);
+        } else {
+          posts = await Post.find();
+          console.log("all posts", posts);
+        }
+        res.status(200).send({ message: "get posts", posts });
+      } catch (err) {
+        res.status(500).send(err);
       }
-      res.status(200).send({ message: "get posts", posts });
-    } catch (err) {
-      res.status(500).send(err);
+    } else {
+      let posts = await Post.find();
+      console.log("posts all:", posts);
+      res.status(200).send({ message: "get posts", posts: posts });
     }
   },
 };
